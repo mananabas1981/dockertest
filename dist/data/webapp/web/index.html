@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payroll System</title>
+
+  <style id="style">
+    #top-loader {
+      width: 100%;
+      height: 5px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10000;
+    }
+
+    #top-loader #load {
+      background-color: rgb(253, 0, 63);
+      width: 99%;
+      height: 100%;
+      animation: prog_anim 20s ease-in;
+    }
+
+    body {
+      background-color: rgb(235, 190, 202);
+    }
+
+    @keyframes prog_anim {
+      0% {
+        width: 0%;
+      }
+
+      25% {
+        width: 50%;
+      }
+
+      75% {
+        width: 60%;
+      }
+
+      100% {
+        width: 99%;
+      }
+    }
+
+
+    .loader-spin {
+      width: 64px;
+      height: 64px;
+      position: relative;
+      background-image:
+        linear-gradient(#FFF 16px, transparent 0),
+        linear-gradient(#FF3D00 16px, transparent 0),
+        linear-gradient(#FF3D00 16px, transparent 0),
+        linear-gradient(#FFF 16px, transparent 0);
+      background-repeat: no-repeat;
+      background-size: 16px 16px;
+      background-position: left top, left bottom, right top, right bottom;
+      animation: rotate 1s linear infinite;
+
+    }
+
+    @keyframes rotate {
+      0% {
+        width: 64px;
+        height: 64px;
+        transform: rotate(0deg)
+      }
+
+      50% {
+        width: 30px;
+        height: 30px;
+        transform: rotate(180deg)
+      }
+
+      100% {
+        width: 64px;
+        height: 64px;
+        transform: rotate(360deg)
+      }
+    }
+
+    .pos-spin {
+      width: 65px;
+      height: 65px;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      z-index: 1000;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="top-loader">
+    <div id="load"></div>
+  </div>
+  <div class="pos-spin">
+    <div class="loader-spin">
+    </div>
+  </div>
+  
+  <!-- for mudular -->
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="app/plugin/core.css" />
+  <link rel="stylesheet" href="app/plugin/font-awesome/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="app/plugin/bt/bs/css/bs5.css" />
+  <script src="app/plugin/bt/bs/js/bs5.js"></script>
+  <script type="module" id="module" src="main.js"></script>
+  <!-- end for modular -->
+
+  
+  <!-- <link rel="stylesheet" href="main.min.css" />
+  <script src="main.min.js" defer></script> -->
+</body>
+
+</html>

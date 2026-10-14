@@ -1,0 +1,29 @@
+Legend:
+    [-] -> PLAN OR PENDING
+    [+] -> ADDED
+
+[+] do not view the blank payroll to make it user friendly 
+[+] create an atm_update.py for bulk update of dbp to dbpsquer
+[-] auto calculate the hour of the barangay coordinator those logbook
+[-] Testing regular payroll, 
+[-] Check if the payroll of regular has 2 files for ada or 2 dbpsquare
+[+] Remove the payroll column automatically if there is zero information example,, hazard,, some office dont have hazard, auto remove it to save space
+[-] Copy the payroll in the previous month this applicable in regular employee
+[-] Remittance per payroll,,,, remove the old remittance
+[+] Auto switch between dbp atm account of the payroll once it is not yet done
+[+] 1 button for re attach the default contribution or other
+[-] create a universal remittances
+[-] create a yearly reports pass dtr
+[+] monthly reports of dtr
+[-] sms integration in payroll
+[-] sms to everyone with every step signatory
+[-] add login attemps 10 attemps
+[-] create excel for input the contribution and loan
+[-] add item number for permanent
+[-] add print code number to avoid mismatched of the papers like : 001, 002, 003, etc
+[-] add todo
+
+[-] half month can be added in the whole month
+[-] added period in the payroll item to know if the dtr is halfmonth
+[-] check the payslip if compict with the whole month where the halfmonth is inserted
+[-] Adding nother message for the ada, example if it is include in the whole month then the column size not a half period

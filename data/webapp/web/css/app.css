@@ -1,0 +1,407 @@
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+
+@keyframes blink {
+  0% {
+    margin-left: 5px;
+  } 
+
+  10% {
+    margin-left: 0px;
+  }
+  20% {
+    margin-left: 5px;
+  }
+  30% {
+    margin-left: 0px;
+  }
+  40% {
+    margin-left: 5px;
+  }
+  50% {
+    margin-left: 0px;
+  }
+  60% {
+    margin-left: 5px;
+  }
+  70% {
+    margin-left: 0px;
+  }
+  80% {
+    margin-left: 5px;
+  }
+  90% {
+    margin-left: 0px;
+  }
+  100% {
+    margin-left: 5px;
+  }
+}
+
+
+body {
+  background-color: #ddd;
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  margin: auto;
+}
+
+.dialog {
+  width: 720px;
+  min-height: 200px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  display: none;
+  margin: auto;
+  background-color: white;
+}
+
+.dialog_container {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(124 124 124 / 30%);
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  display: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.dialog_modal {
+  width: 1024px;
+  min-height: 200px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+  position: relative;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 2px;
+  /* overflow-y: auto; */
+  /* overflow-x: hidden; */
+}
+
+.dialog_container .dialog_modal .title {
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+}
+
+@keyframes _rotate {
+  from {
+    rotate: 0deg;
+  }
+
+  to {
+    rotate: 360deg;
+  }
+}
+
+.rotate {
+  animation: _rotate 2s infinite;
+}
+
+.rotate {
+  animation: _rotate 1s infinite ease-in-out;
+}
+
+@media(max-width: 1000px) {
+  .dialog {
+    width: 90%;
+  }
+
+  .dialog_modal {
+    width: 90%;
+  }
+}
+
+.title {
+  font-weight: bold;
+  font-size: 12pt;
+  color: #8d8d8d;
+  width: 100%;
+  height: 30px;
+  background-color: #efefef;
+  padding: 5px;
+}
+
+.loader {
+  width: 100%;
+  height: 16px;
+  display: inline-block;
+  background-color: #FFF;
+  border: 1px solid #FFF;
+  border-radius: 4px;
+  background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.25) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.25) 50%, rgba(0, 0, 0, 0.25) 75%, transparent 75%, transparent);
+  font-size: 30px;
+  background-size: 1em 1em;
+  box-sizing: border-box;
+  animation: barStripe 1s linear infinite;
+}
+
+@keyframes barStripe {
+  0% {
+    background-position: 1em 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+
+
+
+/* Design of the main home  */
+.main-panel {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+
+/* adjust background */
+.side-panel-bg::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.side-panel,
+.side-panel-bg {
+  position: absolute;
+  /* background-color: grey; */
+  height: 100%;
+}
+
+.side-panel {
+  z-index: 2;
+  overflow-y: hidden;
+}
+
+.side-panel-bg {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50%;
+  background-image: url('../images/side.jfif');
+}
+
+.login-bg {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50%;
+  background-image: url('../images/login-bg.jpeg');
+}
+
+.side-title {
+  width: 100%;
+  height: 64px;
+  position: relative;
+  border-bottom: 1px solid rgb(189, 184, 184);
+}
+
+.side-logo {
+  background-color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  left: 10px;
+}
+
+.side-menu-btn {
+  width: 100%;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 5px;
+  border: none;
+  color: white;
+  font-size: 12pt;
+  text-align: left;
+  padding-left: 30px;
+}
+
+.side-menu-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.side-menu-active {
+  background-color: #4caf50 !important;
+}
+
+/* for contents  */
+.content {
+  width: 100%;
+  height: 100%;
+  background-color: #ddd;
+  overflow-x: hidden;
+}
+
+/* end for content */
+
+.box {
+  width: 100%;
+  height: 90px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  position: relative;
+}
+
+.box-icon {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  background-color: #4caf50;
+  border-radius: 5px;
+  top: -10px;
+  left: 5px;
+}
+
+.ticon {
+  color: white;
+  font-size: 20pt;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}
+
+/* end design main home   */
+
+
+/* Login */
+.login-card {
+  width: 360px;
+  height: 300px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+@media(max-width: 360px) {
+  .login-card {
+    width: 96%;
+  }
+}
+
+/* End Login */
+
+.card {
+  width: 100%;
+  min-height: 100px;
+  background-color: white;
+  position: relative;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+}
+
+
+.search_list_wrap {
+  width: 100%;
+  min-height: 100px;
+  position: absolute;
+  left: 0px;
+  top: 48px;
+  z-index: 10;
+  padding: 0px 10px 10px 10px;
+}
+
+.search_content {
+  width: 100%;
+  min-height: 100px;
+  background-color: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  padding: 5px;
+}
+
+.search_close {
+  width: 28px;
+  height: 28px;
+}
+
+.select {
+  background-color: #ffcd70;
+  border: none;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  padding: 5px;
+}
+
+.unselect {
+  background-color: #ffba39;
+  border: none;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+  padding: 5px;
+}
+
+.small-card {
+  background-color: white;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.qr_status_panel {
+  background-color: white;
+  width: 120px;
+  height: 30px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 100;
+}
+
+.red-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+  position: absolute;
+  left: 5px;
+  top: 10px;
+}
+
+.green-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: green;
+  position: absolute;
+  left: 5px;
+  top: 10px;
+}

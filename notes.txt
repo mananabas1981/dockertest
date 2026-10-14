@@ -1,0 +1,105 @@
+* payroll 
+    -> added bank_info column
+    -> add foreign key of the payroll_item and  reference payroll refid
+    -> added name text column
+    -> added status text column in database
+
+    payroll_item 
+    	->  added column other_info text
+
+
+
+
+
+
+"signature_id"  TEXT, user table ---- ok
+
+sign_id TEXT -> in signatory table --- ok
+
+sign_id Text -> in OBR ---- ok
+
+
+sign_id Text -> default_head_office ---- ok
+
+
+
+
+# create remittances
+# -> August 19, 2024
+
+CREATE TABLE "remittance_base" (
+    "id"    TEXT,
+    "code"  TEXT,
+    "name"  TEXT,
+    "from_" TEXT,
+    "to_"   TEXT,
+    "refids"    JSON,
+    "createdby" TEXT,
+    "datecreated"   TEXT,
+    "status"    TEXT,
+    PRIMARY KEY("id")
+);
+
+CREATE TABLE "remittance_item" (
+    "remittance_id" TEXT,
+    "emp_id"    TEXT,
+    "data"  JSON,
+    "addedby"   TEXT,
+    "createdby" TEXT,
+    "status"    TEXT,
+    PRIMARY KEY("remittance_id","emp_id")
+);
+
+
+-------------------------------------------------------------------------------------------------------------
+                                            ABOUT THE PAYROLL FILE OF DBP
+.txt  
+    -> max to 74 characters
+    -> 1st column
+                -> max to 10 digit the bank account number
+                -> allocated 3 spaces between 1st column and second column
+    -> 2nd Column
+                ->
+
+    -> code
+            ->
+            # txt
+            account, name, amount = '1234567890', 'MARJON CAJOCON', '5000'
+            line = '{: <13}{: <50}{: <11}'.format(account[:13], name[:50], amount[:11]) 
+
+.prn
+    -> max to 71 characters
+
+    -> code
+            ->
+            # prn
+            account, name, amount = '12345679011222', 'MARJON CAJOCON', '5000'
+            line = '{: <10}{: <50}{: <11}'.format(account[:10], name[:50], amount[:11])
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+
+
+# about the digital signature
+
+ there are 3 data
+ sign_key = the original signkey
+ sign_val = the signature
+ sign_date = date where the signature is sign by the users
+
+
+
+ # -> new dbp -> account format
+
+ new account regex -> = ^[0][0-9]{8}[A-Z][0-9]{3}$
+
+
+ -> DataBase Changes
+ -> added "atm_info" TEXT in "payroll" table : oct 07, 2024
+
+
+ -> 11/06/2024 -> 
+  * update rate_history table
+    - added column integer: "nwpd"	INTEGER

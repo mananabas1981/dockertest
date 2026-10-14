@@ -1,0 +1,1776 @@
+// for interface
+const mcreate_name = function () {
+  var t = '';
+  for (var i = 0; i < 20; i++) {
+    var c = 97 + Math.floor(Math.random() * 25);
+    t += String.fromCharCode(c);
+  }
+  return t;
+};
+
+
+const _ = {
+  c: function (l) {
+    return document.createElement(l);
+  },
+  e: function (a, c) {
+    o.addEventListener(_, c);
+  }
+};
+
+export var Interface = function () { };
+
+Interface.prototype.id = null;
+Interface.prototype.container = null;
+Interface.prototype.control = null;
+
+Interface.prototype.getContainer = function () {
+  return this._c;
+};
+
+Interface.prototype.hide = function () {
+  this._c.style.display = "none";
+  return this;
+};
+
+Interface.prototype.show = function () {
+  this._c.style.display = "inline-block";
+  return this;
+};
+
+// Interface.prototype.setId = function (id) {
+//   this.id = id;
+//   return this;
+// };
+
+// Interface.prototype.getId = function () {
+//   return this.id;
+// };
+
+// Interface.prototype.setBackgroundColor = function (color) {
+//   this.control.style.backgroundColor = color;
+//   return this;
+// };
+
+// Interface.prototype.setFontColor = function (color) {
+//   this.control.style.color = color;
+//   return this;
+// };
+
+// Interface.prototype.setFontStyle = function (font_family) {
+//   this.control.style.fontFamily = font_family;
+//   return this;
+// };
+
+Interface.prototype.addClass = function (_) {
+  if (typeof (_) == "string") {
+    this.control.classList.add(_);
+  } else if (_ instanceof Array) {
+    for (var i = 0; i < _.length; i++) {
+      var x = _[i];
+      this.control.classList.add(x);
+    }
+  } else {
+    console.log("Invalid remove class parameter");
+  }
+  return this;
+};
+
+Interface.prototype.removeClass = function (_) {
+  if (typeof (_) == "string") {
+    this.control.classList.remove(_);
+  } else if (_ instanceof Array) {
+    for (var i = 0; i < _.length; i++) {
+      var x = _[i];
+      this.control.classList.remove(x);
+    }
+  } else {
+    console.log("Invalid remove class parameter");
+  }
+  return this;
+};
+
+Interface.prototype.clear = function () {
+  while (this._c.firstChild) {
+    this._c.removeChild(this._c.firstChild);
+  }
+  
+  return this;
+};
+
+Interface.prototype.setStyle = function (obj) {
+  if (typeof (obj) != 'object') throw new TypeError('obj must be an object like dictionary');
+
+  for (var x in obj) {
+    this.control.style[x] = obj[x];
+  }
+  return this;
+};
+
+Interface.prototype.setAttr = function (obj) {
+  if (typeof (obj) != 'object') throw new TypeError('obj must be an object like dictionary');
+
+  for (var x in obj) {
+    this.control.setAttribute(x, obj[x]);
+  }
+  return this;
+};
+
+Interface.prototype.getAttr = function (str) {
+  return this.control.attributes[str].nodeValue;;
+};
+
+
+
+
+
+Interface.prototype.setBackgroundImage = function (img) {
+  // image goes here
+};
+// end for interface
+
+
+
+export var Grid = function (pad) {
+
+  var panel = new Panel().addClass('row');
+
+  var pad = pad || 0;
+
+  this._c = panel._c;
+
+
+  this.cell = function (obj, size) {
+
+    if (!(obj instanceof Interface)) {
+      throw new TypeError('obj is not supported! use Interface class');
+    }
+
+    if (!(size instanceof Array)) {
+      throw new TypeError('size must be an array or list');
+    }
+
+    var td = new Panel();
+    for (var x in size) {
+      td.addClass('col-' + size[x]);
+      if (pad != -1)
+        td.setStyle({
+          padding: pad + 'px'
+        });
+    }
+
+    td.add(obj);
+
+    panel.add(td);
+
+    return this;
+  };
+
+};
+
+Grid.prototype = Object.create(Interface.prototype);
+
+
+/* Application */
+export var Application = function () {
+  this.body = null;
+  this.body = document.getElementsByTagName("body")[0];
+  this._c = _.c("div");
+  this.body.appendChild(this._c);
+  this._c.style.width = "100%";
+  this._c.style.height = "100%";
+  this._c.style.margin = "0px";
+  this._c.style.padding = "0px";
+  this._c.style.position = "relative";
+};
+
+Application.prototype = Object.create(Interface.prototype);
+
+Application.prototype.clear = function () {
+  while (this._c.firstChild) {
+    this._c.removeChild(this._c.firstChild);
+  };
+  return this;
+};
+
+Application.prototype.open = function (panel) {
+  this.clear();
+  this._c.appendChild(panel.getContainer());
+  return this;
+};
+
+Application.prototype.add = function (obj) {
+  this._c.appendChild(obj.getContainer());
+  return this;
+};
+
+Application.prototype.route = function (widget) {
+  this.clear();
+  this._c.appendChild(widget.getContainer());
+  return this;
+};
+
+/* End Application */
+
+
+
+// Table control
+export var Table = function (header, style = []) {
+
+  this.option = [];
+
+  this.table = null;
+  this.tbody = null;
+  this.__header = header;
+  this.loader = null;
+
+  // initialized class
+  this.loader = _.c("div");
+  this.loader.style.padding = "10px";
+  this.loader.innerHTML = '<span class="loader"></span>';
+
+  var header = this.__header;;
+
+  this._c = _.c("div");
+  // this._c.style.display = "none";
+  this.table = _.c("table");
+  this.table.setAttribute("class", "table");
+  this.tbody = _.c("tbody");
+
+  this.control = this.table;
+  // create header
+  var thead = _.c("thead");
+  var tr = _.c("tr");
+  var th = _.c("th");
+
+  // for (var x of header) {
+  //   var th = _.c("th");
+  //   th.innerHTML = x;
+  //   tr.appendChild(th);
+  // }
+
+  for (let i = 0; i < header.length; i++) {
+    const th = _.c("th");
+    th.innerHTML = header[i];
+
+    if (i < style.length) {
+      for (let key in style[i]) {
+        th.style[key] = style[i][key];
+      }
+    }
+
+    tr.appendChild(th);
+  }
+
+  thead.appendChild(tr);
+  this.table.appendChild(thead);
+  // end create header
+
+  // initialized the body of the table
+  this.table.appendChild(this.tbody);
+  this._c.appendChild(this.table);
+
+};
+
+Table.prototype = Object.create(Interface.prototype);
+
+Table.prototype.clear = function () {
+  while (this.tbody.firstChild) {
+    this.tbody.removeChild(this.tbody.firstChild);
+  }
+  return this;
+};
+
+Table.prototype._con_clear = function () {
+  while (this._c.firstChild) {
+    this._c.removeChild(this._c.firstChild);
+  }
+  return this;
+};
+
+Table.prototype.show = function () {
+  this._con_clear();
+  this._c.style.display = "block";
+  this._c.appendChild(this.table);
+  return this;
+};
+
+Table.prototype.getTable = function () {
+  return this.table;
+};
+
+Table.prototype.load = function () {
+  // loader
+  this._con_clear();
+  this._c.appendChild(this.loader);
+  return this;
+};
+
+Table.prototype.row = function (data) {
+  // clear the body
+  this.clear();
+
+  // manipulate the body
+  // for (var x of data) {
+  //   var tr = _.c("tr");
+
+  //   for (var y of x) {
+  //     console.log(typeof(y));
+  //     var td = _.c("td");
+  //     td.style.cursor = "pointer";
+  //     if (typeof(y) == "object") {
+  //       td.appendChild(y); // if button or any elements
+  //     } else {
+  //       td.innerHTML = y;
+  //     }
+  //     tr.appendChild(td);
+  //   }
+
+  //   this.tbody.appendChild(tr); 
+  // }
+
+  for (var i = 0; i < data.length; i++) {
+    var tr = _.c("tr");
+    var x = data[i];
+
+    for (var j = 0; j < x.length; j++) {
+      var td = _.c("td");
+      var y = x[j];
+      td.style.cursor = "pointer";
+      if (typeof (y) == "object") {
+        td.appendChild(y); // if button or any elements
+      } else {
+        td.innerHTML = y;
+      }
+      tr.appendChild(td);
+    }
+
+  }
+  // end update the body
+  return this;
+};
+
+Table.prototype.prepend = function (data) {
+  var tr = _.c("tr");
+
+  // for (var y of data) {
+  //   var td = _.c("td");
+  //   td.style.cursor = "pointer";
+  //   if (typeof(y) == "object") {
+  //     td.appendChild(y); // if button or any elements
+  //   } else {
+  //     td.innerHTML = y;
+  //   }
+  //   tr.appendChild(td);
+  // }
+
+  for (var i = 0; i < data.length; i++) {
+    var y = data[i];
+    var td = _.c("td");
+    td.style.cursor = "pointer";
+    if (typeof (y) == "object") {
+      td.appendChild(y); // if button or any elements
+    } else {
+      td.innerHTML = y;
+    }
+    tr.appendChild(td);
+  }
+
+  this.tbody.prepend(tr);
+
+  return this;
+};
+
+// add row 
+Table.prototype.add = function (data, style = [], tr_style = {}) {
+
+  this.option.push(data);
+
+  var tr = _.c("tr");
+  // for (var y of data) {
+  //   var td = _.c("td");
+  //   td.style.cursor = "pointer";
+  //   if (typeof(y) == "object") {
+  //     td.appendChild(y.getContainer()); // if button or any elements
+  //   } else {
+  //     td.innerHTML = y;
+  //   }
+  //   tr.appendChild(td);
+  // }
+
+  for (let i = 0; i < data.length; i++) {
+    var y = data[i];
+    var td = _.c("td");
+    td.style.cursor = "pointer";
+
+
+    if (i < style.length) {
+      for (let key in style[i]) {
+        td.style[key] = style[i][key];
+      }
+    }
+
+    if (typeof (y) == "object") {
+      td.appendChild(y.getContainer()); // if button or any elements
+    } else {
+      td.innerHTML = y;
+    }
+
+
+    tr.appendChild(td);
+
+    if (tr_style) {
+      for (let item in tr_style) {
+        tr.style[item] = tr_style[item];
+      }
+    }
+  }
+
+  this.tbody.appendChild(tr);
+  return this;
+};
+Table.prototype.getValue = function () {
+  var data = [];
+  var option = this.option;
+  var option_len = option.length;
+
+  for (var i = 0; i < option_len; i++) {
+    var slen = option[i].length;
+    var sdata = [];
+    for (var j = 0; j < slen; j++) {
+      sdata.push(option[i][j].getValue());
+    }
+    data.push(sdata);
+  }
+
+  return data;
+};
+
+
+// end of the table
+
+// CheckBox
+
+export var CheckBox = function (_mark) {
+
+  var mark = _mark || false;
+
+  this._c = null;
+  this._n = null;
+  this._c = _.c("input");
+  this._c.setAttribute("name", mcreate_name());
+  this._c.style.height = "20px";
+  this._c.style.width = "20px";
+  this._c.setAttribute('type', 'checkbox');
+  this._c.checked = mark;
+  this._n = this._c;
+
+  this.control = this._c;
+
+  this.events = {};
+};
+
+CheckBox.prototype = Object.create(Interface.prototype);
+
+CheckBox.prototype.setValue = function (mark_true_false) {
+  this._n.checked = mark_true_false;
+  return this;
+};
+CheckBox.prototype.getValue = function (mark) {
+  return this._n.checked;
+};
+CheckBox.prototype.addEventListener = function (evt, callback) {
+  var ok = typeof (this.events[evt]) == "undefined";
+  if (ok) {
+    if (this.events[evt] != evt) {
+      this._n.addEventListener(evt, callback);
+    }
+    this.events[evt] = evt;
+  }
+  return this;
+};
+
+// end of checkbox
+// Radio button
+
+export var RadioButton = function (name) {
+  this.name = name || "";
+
+  this._c = null;
+  this._n = null;
+  this._c = _.c("div");
+
+  this._n = this._c;
+
+  this.control = this._c;
+
+  this.events = {};
+  this.el = [];
+};
+
+RadioButton.prototype = Object.create(Interface.prototype);
+RadioButton.prototype.add = function (label, value) {
+  var c = this._c;
+
+  var p = _.c("div");
+  p.style.position = "relative";
+
+  var rad = _.c("input");
+  rad.style.height = "20px";
+  rad.style.width = "20px";
+  rad.style.position = "absolute";
+  rad.style.top = "3px";
+
+  var id_val = label.replace(" ", "").trim();
+  rad.setAttribute("type", "radio");
+  rad.setAttribute("name", this.name);
+  rad.setAttribute("value", value);
+  rad.setAttribute("id", id_val);
+
+  var labelf = _.c("label");
+  labelf.setAttribute("for", id_val);
+  labelf.innerText = label;
+  labelf.style.marginLeft = "23px";
+  labelf.style.marginTop = "7px";
+  p.appendChild(rad);
+  p.appendChild(labelf);
+  c.appendChild(p);
+
+  this.el.push(rad);
+};
+
+RadioButton.prototype.setValue = function (value) {
+  var el = this.el;
+  var el_len = el.length;
+  for (var i = 0; i < el_len; i++) {
+    var r = el[i];
+    if (r.attributes.value.nodeValue == value) {
+      r.checked = true;
+      break;
+    }
+  }
+  return this;
+};
+
+RadioButton.prototype.getValue = function () {
+  var el = this.el;
+  var el_len = el.length;
+  for (var i = 0; i < el_len; i++) {
+    var r = el[i];
+    if (r.checked) {
+      return r.attributes.value.nodeValue;
+    }
+  }
+  return "";
+};
+
+// end Radio button
+
+// text box
+
+export var TextBox = function (label, type, icon, hint, placeholder) {
+
+  this.placeholder = placeholder || "";
+  this.hint = hint || null;
+
+
+  this.i = null;
+  this.icon = icon || null;
+  this.type = type || "text";
+
+  this._lb = label;
+
+  this._c = null;
+  this._n = null;
+
+  this.events = {};
+
+  // initialized class
+
+  this._c = _.c("div");
+  this._c.style.marginTop = "3px";
+  this._c.setAttribute("class", "input-group");
+
+  var span = _.c("span");
+
+  this.i = _.c("i");
+  this.i.setAttribute("class", 'fa fa-' + this.icon);
+  span.setAttribute("class", "input-group-addon");
+
+  if (this.icon != null) {
+    span.appendChild(this.i);
+  } else {
+    span.innerHTML = this._lb;
+  }
+
+  this._n = _.c("input");
+  this._n.setAttribute("class", "form-control");
+  this._n.setAttribute("type", this.type);
+  this._n.setAttribute("name", mcreate_name());
+  this._n.setAttribute('autocomplete', 'off');
+  this.control = this._n;
+  if (this.hint != null) {
+    this._n.setAttribute("data-toggle", "tooltip");
+    this._n.setAttribute("title", this.hint);
+  }
+
+  this._n.setAttribute("placeholder", this.placeholder);
+
+  this._c.appendChild(span);
+  this._c.appendChild(this._n);
+
+};
+
+TextBox.prototype = Object.create(Interface.prototype);
+TextBox.prototype.setPlaceHolder = function (t) {
+  this._n.setAttribute("placeholder", t);
+  return this;
+};
+TextBox.prototype.setValue = function (value) {
+  this._n.value = value;
+  return this;
+};
+TextBox.prototype.getValue = function () {
+  return this._n.value;
+};
+
+TextBox.prototype.setStyle = function(styles) {
+  for (const style in styles) {
+    this._c.style[style] = styles[style];
+  }
+  return this;
+};
+
+
+TextBox.prototype.addEventListener = function (evt, callback) {
+  var ok = typeof (this.events[evt]) == "undefined";
+  if (ok) {
+    if (this.events[evt] != evt) {
+      this._n.addEventListener(evt, callback);
+    }
+    this.events[evt] = evt;
+  }
+  return this;
+};
+
+
+
+// end text box
+
+export var Label = function (label) {
+  this._lb = label || "";
+  this._c = _.c("label");
+  this._c.innerHTML = this._lb;
+  this.control = this._c;
+  this.events = {};
+};
+Label.prototype = Object.create(Interface.prototype);
+Label.prototype.setValue = function (value) {
+  this._c.innerHTML = value;
+  return this;
+};
+Label.prototype.addEventListener = function (evt, callback) {
+  var ok = typeof (this.events[evt]) == "undefined";
+  if (ok) {
+    if (this.events[evt] != evt) {
+      this._c.addEventListener(evt, callback);
+    }
+    this.events[evt] = evt;
+  }
+  return this;
+};
+
+// comboBox
+export var ComboBox = function (option, label, type, icon, hint, placeholder) {
+
+  this.option = option || [];
+
+  /* 
+    options must be an array of an array;
+    example: [
+      ["f", "Female"],
+      ["m", "Male"],
+      ["o", "Other"]
+    ]
+  */
+
+
+  this.options = [];
+
+  this.placeholder = placeholder || "";
+  this.hint = hint || null;
+
+
+  this.i = null;
+  this.icon = icon || null;
+  this.type = type || "text";
+
+  this._lb = label;
+
+  this._c = null;
+  this._n = null;
+  this.events = {};
+
+  // initialized class
+  this._c = _.c("div");
+  this._c.style.marginTop = "3px";
+  this._c.setAttribute("class", "input-group");
+
+  var span = _.c("span");
+
+  this.i = _.c("i");
+  this.i.setAttribute("class", 'fa fa-' + this.icon);
+  span.setAttribute("class", "input-group-addon");
+
+  if (this.icon != null) {
+    span.appendChild(this.i);
+  } else {
+    span.innerHTML = this._lb;
+  }
+
+  this._n = _.c("select");
+  this._n.setAttribute("name", mcreate_name());
+  this._n.setAttribute("class", "form-control");
+  this._n.setAttribute("type", this.type);
+  this.control = this._n;
+  if (this.hint != null) {
+    this._n.setAttribute("data-toggle", "tooltip");
+    this._n.setAttribute("title", this.hint);
+  }
+
+  this._n.setAttribute("placeholder", this.placeholder);
+
+  // all all the options in the placeholder
+  // for (var v of this.option) {
+  //   this.add(v[0], v[1]);
+  // }
+
+  for (var i = 0; i < this.option.length; i++) {
+    var v = this.option[i];
+    this.add(v[0], v[1]);
+  }
+
+  this._c.appendChild(span);
+  this._c.appendChild(this._n);
+
+  this.control = this._c;
+};
+
+ComboBox.prototype = Object.create(Interface.prototype);
+ComboBox.prototype.setPlaceHolder = function (t) {
+  this._n.setAttribute("placeholder", t);
+  return this;
+};
+ComboBox.prototype.setValue = function (value) {
+  this._n.value = value;
+  return this;
+}
+ComboBox.prototype.getValue = function () {
+  return this._n.value;
+};
+ComboBox.prototype.addEventListener = function (evt, callback) {
+  var ok = typeof (this.events[evt]) == "undefined";
+  if (ok) {
+    if (this.events[evt] != evt) {
+      this._n.addEventListener(evt, callback);
+    }
+    this.events[evt] = evt;
+  }
+  return this;
+};
+ComboBox.prototype.clear = function () {
+  // for (var x of this.options) {
+  //   x.remove();
+  // }
+  for (var i = 0; i < this.options.length; i++) {
+    var x = this.options[i];
+    x.remove();
+  }
+  return this;
+};
+ComboBox.prototype.add = function (key, value) {
+  var option = _.c("option");
+  option.setAttribute("value", key);
+  option.innerHTML = value;
+  this._n.appendChild(option);
+  this.options.push(option);
+  return this;
+};
+// end combobox
+// button
+export var Button = function (name, type, icon, hint) {
+  // container
+  this.hint = hint || null;
+  // type danger, success, primary
+
+  this.type = type || null;
+  this.name = name || "";
+  this.icon = icon || "";
+
+  this.events = {};
+
+  this._c = _.c("button");
+  this.control = this._c;
+  if (this.type != null) {
+    this._c.setAttribute("class", 'btn btn-' + this.type);
+  }
+  this._i = _.c("i");
+  if (this.icon != "") {
+    this._i.style.marginRight = "5px";
+  }
+  if (this.hint != null) {
+    this._c.setAttribute("data-toggle", "tooltip");
+    this._c.setAttribute("title", this.hint);
+  }
+  if (this.icon != "")
+    this._i.setAttribute("class", 'fa fa-' + this.icon);
+
+  var name = _.c("span");
+  name.innerHTML = this.name;
+  this._c.appendChild(this._i);
+  this._c.appendChild(name);
+};
+
+Button.prototype = Object.create(Interface.prototype);
+Button.prototype.addEventListener = function (evt, callback) {
+  var ok = typeof (this.events[evt]) == "undefined";
+  if (ok) {
+    if (this.events[evt] != evt) {
+      this._c.addEventListener(evt, callback);
+    }
+    this.events[evt] = evt;
+  }
+  return this;
+};
+Button.prototype.setIcon = function (_i) {
+  this._i.style.marginRight = "5px";
+  this._i.removeAttribute("class");
+  this._i.setAttribute("class", 'fa fa-' + _i);
+  return this;
+};
+// end button
+
+
+// modal
+/*
+
+  var dialog_con = _.c("div");
+  dialog_con.setAttribute("class", "dialog_container");
+  var dialog = _.c("div");
+  dialog.setAttribute("class", "dialog_modal");
+
+*/
+
+export var Panel = function (widget) {
+  var widget = widget || [];
+  // widget array
+  // width = [textbox, button,etc..]
+  this._c = _.c("div");
+  this.control = this._c;
+
+  for (var i = 0; i < widget.length; i++) {
+    this.control.appendChild(widget[i].getContainer());
+  }
+};
+
+Panel.prototype = Object.create(Interface.prototype);
+
+Panel.prototype.add = function (mcontrol_obj) {
+  if (mcontrol_obj instanceof Array) {
+
+    for (let i = 0; i < mcontrol_obj.length; ++i) {
+      const item = mcontrol_obj[i];
+      try {
+        this._c.appendChild(item.getContainer());
+      } catch(e) {
+        this._c.appendChild(item);
+      }
+    }
+
+  } else { 
+    try {
+      this._c.appendChild(mcontrol_obj.getContainer());
+    } catch(e) {
+      this._c.appendChild(mcontrol_obj);
+    }
+  }
+  return this;
+};
+Panel.prototype.addEventListener = function (e, fn) {
+  this._c.addEventListener(e, fn);
+  return this;
+};
+
+
+// iframe
+export const Iframe = function (widget) {
+  var widget = widget || [];
+  // widget array
+  // width = [textbox, button,etc..]
+  this._c = _.c("iframe");
+  this.control = this._c;
+
+  for (var i = 0; i < widget.length; i++) {
+    this.control.appendChild(widget[i].getContainer());
+  }
+};
+
+Iframe.prototype = Object.create(Interface.prototype);
+// end iframe
+
+export const Modal = function (title, icon = '', is_full_screen = false) {
+  this.title = title || null;
+  this.icon = icon;
+
+  this._c = null;
+  this.dialog = null;
+  this.body = null;
+
+  // Intialized the class
+  this._c = _.c("div");
+  this._c.setAttribute("class", "dialog_container");
+
+  this.dialog = _.c("div");
+  this.dialog.setAttribute("class", "dialog_modal");
+
+
+  const me = this;
+
+  const close = _.c("button");
+  close.innerHTML = 'x';
+  close.style.height = "23px";
+  close.style.width = "23px";
+  close.style.position = "absolute";
+  close.style.right = "10px";
+  close.style.top = "3px";
+  close.style.fontSize = "9pt";
+
+  this.type = null;
+  this.close = close;
+  if (this.type == null) {
+    close.addEventListener("click", () => {
+      me.hide();
+      // if (this.type != null) {
+      //   this._c.remove();
+      // }
+    });
+  }
+
+  var title = _.c("div");
+  title.classList.add("title");
+  title.style.position = "relative";
+  title.innerHTML = `<i class="fa fa-${this.icon}"></i>${this.icon.length > 0 ? ' ' : ''}` + this.title;
+  title.appendChild(close);
+
+  this.dialog.appendChild(title);
+  // contents
+  this.body = _.c("div");
+  this.body.style.padding = "10px";
+  this.body.style.position = "relative";
+  this.dialog.appendChild(this.body);
+  // end contents
+  this._c.appendChild(this.dialog);
+
+  this.control = this.dialog;
+
+};
+
+Modal.prototype = Object.create(Interface.prototype);
+Modal.prototype.add = function (obj_element) {
+  // only the above classes can be appendChilded
+  if (obj_element instanceof Array) {
+    for (let x of obj_element) {
+      this.body.appendChild(x.getContainer());
+    }
+  }
+  else {
+    this.body.appendChild(obj_element.getContainer());
+  }
+  return this;
+};
+
+export class ModalV2 extends Modal {
+  constructor(title, icon, is_full_screen = false) {
+    super(title, icon, is_full_screen);
+    this.type = 1;
+    this.resolve = null;
+    this.resolvefn = null;
+    document.body.append(this._c);
+  }
+
+  mwidth(minus) {
+    this.setStyle({
+        width: `${window.innerWidth - minus}px`
+    });
+  }
+
+  async show() {
+    this._c.style.display = 'block';
+
+    const promise = new Promise((resolve, reject) => {
+      this.resolvefn = resolve;
+      this.close.addEventListener("click", () => {
+        resolve(this.resolve);
+        this._c.remove();
+      });
+    });
+
+    return await promise;
+  }
+  
+  hide(resolve = null) {
+
+    if (this.resolve == true) { 
+      this.resolvefn(this.resolve);
+    } else {
+      this.resolvefn(resolve);
+    }
+    this._c.remove();
+  }
+}
+
+
+
+// alerts 
+export var MessageBox = function () {
+  this._c = _.c("div");
+  this._c.style.display = "none";
+  this._c.style.backgroundColor = "rgba(0, 0, 0, 0.12)";
+  this._c.style.zIndex = "1000";
+  this._c.style.width = "100%";
+  this._c.style.height = "100%";
+  this._c.style.position = "fixed";
+  this._c.style.left = "0";
+  this._c.style.top = "0";
+
+  this._d = _.c("div");
+  this._d.style.position = "absolute";
+  this._d.style.width = "360px";
+  this._d.style.height = "200px";
+  this._d.style.backgroundColor = "white";
+  this._d.style.left = "0";
+  this._d.style.right = "0";
+  this._d.style.bottom = "0";
+  this._d.style.top = "0";
+  this._d.style.margin = "auto";
+  this._d.style.borderRadius = "10px";
+  this._d.style.boxShadow = "2px 2px 5px rgba(0, 0, 0, 0.5)";
+
+  this._k = _.c("button");
+  this._k.innerHTML = "OK";
+  this._k.style.width = "100px";
+  this._k.style.height = "35px";
+  this._k.style.backgroundColor = "#16c4cd";
+  this._k.style.color = "white";
+  this._k.style.fontWeight = "bold";
+  this._k.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+  this._k.style.position = "absolute";
+  this._k.style.left = "0";
+  this._k.style.right = "0";
+  this._k.style.bottom = "10px";
+  this._k.style.margin = "auto";
+
+  this._lb = _.c("label");
+  this._lb.style.position = "absolute";
+  this._lb.style.left = "0";
+  this._lb.style.right = "0";
+  this._lb.style.top = "10px";
+  this._lb.style.fontSize = "30pt";
+  this._lb.style.margin = "auto";
+  this._lb.style.width = "200px";
+  this._lb.style.height = "20pt";
+  this._lb.style.textAlign = "center";
+  this._lb.style.color = "#8f8787";
+  this._lb.style.fontWeight = "bold";
+
+  this._m = _.c("p");
+  this._m.style.position = "absolute";
+  this._m.style.left = "0";
+  this._m.style.right = "0";
+  this._m.style.top = "80px";
+  this._m.style.fontSize = "15pt";
+  this._m.style.margin = "auto";
+  this._m.style.width = "250px";
+  this._m.style.height = "20pt";
+  this._m.style.textAlign = "center";
+  this._m.style.color = "#8f8787";
+
+  this._d.appendChild(this._lb);
+  this._d.appendChild(this._m);
+  this._d.appendChild(this._k);
+
+  this._c.appendChild(this._d);
+
+  var me = this;
+  this.callback = null;
+  this._k.addEventListener("click", function () {
+    try {
+      me.hide();
+      me.call_back();
+    } catch (er) {
+      me.hide();
+    }
+  });
+  this.control = this._d;
+};
+
+MessageBox.prototype = Object.create(Interface.prototype);
+
+MessageBox.prototype.show = function (msg, _callback) {
+  var type = type || "A l e r t !";
+  var msg = msg || "";
+  var _callback = _callback || undefined;
+  this._c.style.display = "block";
+  this._lb.innerHTML = type;
+
+  this._m.innerHTML = msg;
+
+  this.call_back = _callback;
+  return this;
+};
+
+
+export const ConfirmBox = function () {
+  this._c = _.c("div");
+  this._c.style.display = "none";
+  this._c.style.backgroundColor = "rgba(0, 0, 0, 0.12)";
+  this._c.style.zIndex = "1001";
+  this._c.style.width = "100%";
+  this._c.style.height = "100%";
+  this._c.style.position = "fixed";
+  this._c.style.left = "0";
+  this._c.style.top = "0";
+
+  this._d = _.c("div");
+  this._d.style.position = "absolute";
+  this._d.style.width = "360px";
+  this._d.style.height = "200px";
+  this._d.style.backgroundColor = "white";
+  this._d.style.left = "0";
+  this._d.style.right = "0";
+  this._d.style.bottom = "0";
+  this._d.style.top = "0";
+  this._d.style.margin = "auto";
+  this._d.style.borderRadius = "10px";
+  this._d.style.boxShadow = "2px 2px 5px rgba(0, 0, 0, 0.5)";
+
+  this._k = _.c("button");
+  this._k.innerHTML = "OK";
+  this._k.style.width = "100px";
+  this._k.style.height = "35px";
+  this._k.style.backgroundColor = "#16c4cd";
+  this._k.style.color = "white";
+  this._k.style.fontWeight = "bold";
+  this._k.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+  // this._k.style.position = "absolute";
+  // this._k.style.left = "0";
+  // this._k.style.right = "0";
+  // this._k.style.bottom = "10px";
+  // this._k.style.margin = "auto";
+
+  this._b = _.c("div");
+  this._b.style.position = "absolute";
+  this._b.style.width = "200px";
+  this._b.style.height = "40px";
+  this._b.style.left = "0";
+  this._b.style.right = "0";
+  this._b.style.bottom = "10px";
+  this._b.style.margin = "auto";
+
+  this._cls = _.c("button");
+  this._cls.innerHTML = "Close";
+  this._cls.style.width = "100px";
+  this._cls.style.height = "35px";
+  this._cls.style.backgroundColor = "rgb(255, 62, 97)";
+  this._cls.style.color = "white";
+  this._cls.style.fontWeight = "bold";
+  this._cls.style.border = "1px solid rgba(255, 255, 255, 0.3)";
+  // this._cls.style.position = "absolute";
+  // this._cls.style.left = "0";
+  // this._cls.style.right = "0";
+  // this._cls.style.bottom = "10px";
+  // this._cls.style.margin = "auto";
+
+  this._lb = _.c("label");
+  this._lb.style.position = "absolute";
+  this._lb.style.left = "0";
+  this._lb.style.right = "0";
+  this._lb.style.top = "15px";
+  this._lb.style.fontSize = "15pt";
+  this._lb.style.margin = "auto";
+  this._lb.style.width = "220px";
+  this._lb.style.height = "20pt";
+  this._lb.style.textAlign = "center";
+  this._lb.style.color = "#8f8787";
+  this._lb.style.fontWeight = "bold";
+
+  this._m = _.c("p");
+  this._m.style.position = "absolute";
+  this._m.style.left = "0";
+  this._m.style.right = "0";
+  this._m.style.top = "80px";
+  this._m.style.fontSize = "15pt";
+  this._m.style.margin = "auto";
+  this._m.style.width = "250px";
+  this._m.style.height = "20pt";
+  this._m.style.textAlign = "center";
+  this._m.style.color = "#8f8787";
+
+  this._b.appendChild(this._k);
+  this._b.appendChild(this._cls);
+
+  this._d.appendChild(this._lb);
+  this._d.appendChild(this._m);
+  this._d.appendChild(this._b);
+
+  this._c.appendChild(this._d);
+
+
+  var me = this;
+  this.callback = null;
+
+  this._cls.addEventListener("click", function () {
+    me.hide();
+    // me.call_back(null);
+  });
+
+  this._k.addEventListener("click", function () {
+    try {
+      me.hide();
+      me.call_back(true);
+    } catch (er) {
+      me.hide();
+    }
+  });
+  this.control = this._d;
+};
+
+ConfirmBox.prototype = Object.create(Interface.prototype);
+
+ConfirmBox.prototype.show = function (msg, _callback) {
+  var type = type || "C O N F I R M A T I O N";
+  var msg = msg || "";
+  var _callback = _callback || undefined;
+  this._c.style.display = "block";
+  this._lb.innerHTML = type;
+
+  this._m.innerHTML = msg;
+
+  this.call_back = _callback;
+};
+
+ConfirmBox.prototype.show_r = async function (msg, _callback = null) {
+  var type = type || "C O N F I R M A T I O N";
+  var msg = msg || "";
+
+  this._c.style.display = "block";
+  this._lb.innerHTML = type;
+
+  this._m.innerHTML = msg;
+
+  if (_callback != null) {
+    this.call_back = _callback;
+    return;
+  }
+
+  const promise = new Promise((resolve, reject) => {
+    this.call_back = function (ok = null) {
+      resolve(ok);
+    };
+  });
+
+  return await promise;
+};
+
+
+export var ProgressBar = function () {
+  this._c = _.c("div");
+
+};
+ProgressBar.prototype = Object.create(Interface.prototype);
+
+export var LoaderBox = function () {
+  this._c = _.c("div");
+  this._c.style.display = "none";
+  this._c.style.backgroundColor = "rgba(0, 0, 0, 0.12)";
+  this._c.style.zIndex = "1000";
+  this._c.style.width = "100%";
+  this._c.style.height = "100%";
+  this._c.style.position = "fixed";
+  this._c.style.left = "0";
+  this._c.style.top = "0";
+
+  this._d = _.c("div");
+  this._d.style.position = "absolute";
+  this._d.style.width = "300px";
+  this._d.style.height = "150px";
+  this._d.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+  this._d.style.left = "0";
+  this._d.style.right = "0";
+  this._d.style.bottom = "0";
+  this._d.style.top = "0";
+  this._d.style.margin = "auto";
+  this._d.style.borderRadius = "10px";
+  this._d.style.boxShadow = "1px 1px 3px rgba(0, 0, 0, 0.5)";
+
+  this._loader = _.c("span");
+  this._loader.setAttribute("class", "loader");
+
+  this._label = _.c("label");
+  this._label.style.fontWeight = "bold";
+  this._label.style.marginTop = "10px";
+  this._label.innerHTML = "Please Wait...";
+  this._d.style.textAlign = "center";
+
+  this._d.appendChild(this._label);
+  this._d.appendChild(this._loader);
+
+  this._c.appendChild(this._d);
+  this.control = this._d;
+
+};
+
+LoaderBox.prototype = Object.create(Interface.prototype);
+
+LoaderBox.prototype.show = function (loadertxt) {
+  this._c.style.display = "block";
+  this._label.innerHTML = loadertxt;
+  return this;
+};
+
+export var Form = function () {
+  this._c = _.c("div");
+  this.control = this._c;
+
+  this._v = [];
+  this.input = {};
+};
+
+Form.prototype = Object.create(Interface.prototype);
+
+Form.prototype.getValues = function () {
+  var data = {};
+  // for (var x of this._v) {
+  //   data[x[0]] = x[1].getValue();
+  // }
+  for (var i = 0; i < this._v.length; i++) {
+    var x = this._v[i];
+    data[x[0]] = x[1].getValue();
+  }
+
+  return data;
+};
+
+Form.prototype.add = function (o, n) {
+  var n = n || null;
+  if (o instanceof Array) {
+    const o_len = o.length;
+
+    for (let i = 0; i < o_len; i++) {
+      if (o[i][1] != null) {
+        this._v.push([o[i][1], o[i][0]]);
+        this.input[o[i][1]] = o[i][0];
+      }
+      this._c.appendChild(o[i][0].getContainer());
+    }
+  } else {
+    if (n != null) {
+      this._v.push([n, o]);
+      this.input[n] = o;
+    }
+    this._c.appendChild(o.getContainer());
+  }
+
+  return this;
+};
+
+Form.prototype.clear = function () {
+  var input = this._v;
+  var input_len = input.length;
+  for (var i = 0; i < input_len; i++) {
+    input[i][1].setValue("");
+  }
+  return this;
+};
+
+export var x_storage = {
+  items: {},
+  setItem: function (key, value) {
+    this.items[key] = value;
+  },
+  getItem: function (key) {
+    var value = this.items[key];
+    if (typeof (value) != 'undefined') {
+      return value;
+    }
+    return null;
+  }
+};
+
+export const Scaffold = async function (action = null, obj = null) {
+  const panel = new Panel().setStyle({
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    zIndex: 1000,
+    overflowY: 'auto'
+  });
+
+  const nav = new Panel().setStyle({
+    width: '100%',
+    height: '50px',
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    backgroundColor: 'rgba(245, 245, 245, 0.9)',
+    boxShadow: '0 0 3px rgba(0, 0, 0, 0.4)'
+  });
+
+  const back = new Button('Exit', 'default', 'close', 'click to go back').setStyle({
+    position: 'absolute',
+    left: '5px',
+    top: '8px'
+  });
+
+  if (action != null) {
+    nav.add(new Panel().setStyle({
+      height: '100%',
+      position: 'absolute',
+      left: '90px',
+      top: '0'
+    }).add(action));
+  }
+
+  nav.add(back);
+
+  panel.add(nav);
+
+  const content = new Panel().setStyle({
+    paddingTop: '50px'
+  });
+
+  if (obj != null) {
+    panel.add(content);
+    content.add(obj);
+  }
+
+  //document.body.prepend(panel.getContainer()); // using prepend allow to  use multiple dialog
+  document.body.append(panel.getContainer());
+
+  const promise = new Promise((resolve, reject) => {
+    back.addEventListener('click', function (e) {
+      panel.getContainer().remove();
+      resolve(null);
+
+    });
+  });
+
+
+  return await promise;
+};
+
+
+const loader_info = [];
+// spinner 
+export class MsgLoader extends Panel {
+  constructor(loader_msg = 'Fetching...') {
+    super();
+    document.body.append(this._c);
+
+
+    this.un = loader_info.length;
+
+    const bot_pos = 10 + (this.un * (45)); // calculate the position of each msg loader
+
+    this.setStyle({
+      padding: '5px',
+      zIndex: 100,
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      width: '300px',
+      height: '40px',
+      position: 'fixed',
+      right: '20px',
+      bottom: `${bot_pos}px`,
+      boxShadow: '0 0 3px rgba(0, 0, 0, 0.3)',
+      borderRadius: '5px'
+    });
+
+
+    loader_info.push({
+      object: this
+    });
+
+    this.panel = new Panel();
+
+    this.panel.add(new Label(`<i class="fa fa-refresh rotate" style="color: orange;"></i> <span style="color: red;"> - ${loader_msg}</span>`));
+
+    this.add(this.panel);
+  }
+
+
+
+  hide(msg_done = 'Loaded!', error = false) {
+    this.panel.clear();
+    if (!error) {
+      this.panel.add(new Label(
+        `<i class="fa fa-check" style="color: green;"></i> <span style="color: green;"> - ${msg_done}</span>`
+      ));
+    } else {
+      this.panel.add(new Label(
+        `<i class="fa fa-close" style="color: red;"></i> <span style="color: red;"> - ${msg_done}</span>`
+      ));
+    }
+
+    setTimeout(() => {
+      this._remove();
+      // reposition all the msg
+    }, 3000);
+
+  }
+
+  _remove() {
+    this._c.remove();
+    loader_info.splice(this._c.un, 1);
+  }
+}
+
+// export class DefaultLoader extends Panel {
+//   constructor() {
+//     super();
+//     document.body.append(this._c);
+//   }
+  
+//   hide() {
+//     this._c.remove();
+//   }
+// }
+
+
+export class DropDown extends Panel {
+
+  /*
+    const drop = new DropDown("Menu", "success").setStyle({
+        marginRight: "10px"
+    });
+    drop.addItem(`<i class="fa fa-edit"></i> hellow`, () => {
+        alert("hellow2");
+    });
+    drop.addItem(`<i class="fa fa-envelop"></i> hellow 2`, () => {
+        alert("hellow2fdsafd");
+    });
+  
+  */
+  constructor(title, type = "default", hint = "") {
+    super();
+    this.addClass("dropdown");
+    this.setStyle({
+      "display": "inline-block"
+    });
+
+    const btn = new Button(`${title}` + ` <span class="caret"></span>`, type, null, hint);
+    this.add(btn);
+    
+
+    this.ul = document.createElement("ul");
+    this.ul.setAttribute("class", "dropdown-menu");
+
+    this.add(this.ul);
+    
+    this.toggle = false;
+
+    btn.addEventListener("click", () => {
+      this.show();
+    });
+  }
+  show() {
+    this.toggle = !this.toggle;
+      // update the ul
+    this.ul.style.display = this.toggle ? "block" : "none";
+  }
+
+  addItem(html, fn) {
+    const li = document.createElement("li");
+    this.ul.appendChild(li);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", "#");
+    link.innerHTML = html;
+
+    li.appendChild(link);
+
+    if (typeof(fn) == "function") {
+      link.addEventListener("click", (e) => {
+        fn();
+        this.show();
+        e.preventDefault();
+      });
+    }
+  }
+
+  clear() {
+    this.ul.innerHTML = '';
+  }
+}
+
+
+class BasicTab extends Panel {
+  constructor() {
+    super();
+
+    this.ul = _.c("ul");
+    this.ul.setAttribute("class", "nav nav-tabs");
+    
+    this.list = [];
+
+    this.content = new Panel();
+    super.add([this.ul, this.content]);
+  }
+
+  _clearactive() {
+    for (const item of this.list) {
+      item.classList.remove("active");
+    }
+  }
+
+  add(name, fn, is_active = false) {
+    const li = _.c("li"); 
+    li.innerHTML = `<a href="#">${name}</a>`;
+    this.ul.appendChild(li);
+    this.list.push(li);
+
+    li.addEventListener("click", () => {
+      this._clearactive();
+      this.content.clear();
+      li.classList.add("active");
+      fn(this.content);
+    });
+    // trigger if it is active
+    if (is_active) {
+      this._clearactive();
+      this.content.clear();
+      li.classList.add("active");
+      fn(this.content);
+    }
+  }
+
+}
+
+
+class DropdownTab extends Panel {
+  constructor() {
+    super();
+
+    this.ul = _.c("ul");
+    this.ul.setAttribute("class", "nav nav-tabs");
+    
+    this.list = [];
+
+    this.content = new Panel();
+    super.add([this.ul, this.content]);
+
+    this.lis = [];
+  }
+
+  _clearactive() {
+    for (const item of this.list) {
+      item.classList.remove("active");
+    }
+  }
+
+  add(name, arr, is_active = false) {
+    const li = _.c("li"); 
+    this.ul.appendChild(li);
+    this.list.push(li);
+    const arr_len = arr.length;
+    
+    if (arr_len >= 0) {
+      li.classList.add("dropdown");
+      const a = _.c("a");
+      a.classList.add("dropdown-toggle");
+      a.setAttribute("data-toggle", "dropdown");
+      a.setAttribute("href", "#");
+      a.innerHTML =`${name} <span class="caret"></span>`;
+      a.setAttribute("aria-expanded", "true");
+      a.style.fontSize = "12px";
+      li.appendChild(a);
+
+      const ul = _.c("ul");
+      ul.classList.add("dropdown-menu");
+      
+
+      let toggle = false;
+      li.addEventListener("click", () => {
+        toggle = !toggle;
+        if (toggle) {
+          ul.style.display = "block";
+        } else {
+          ul.style.display = "none";
+        }
+      });
+
+      for (let i = 0; i < arr_len; i++) {
+        const li = _.c("li");
+        li.innerHTML = `<a href="#">${arr[i][0]}</a>`;
+        this.lis.push(li);
+
+        li.addEventListener("click", () => {
+          
+          for (const s of this.lis) {
+            s.classList.remove("active");
+          }
+
+          li.classList.add("active");
+          this.content.clear();
+          
+          const fn = arr[i][1];
+
+          fn(this.content);
+        });
+
+        ul.appendChild(li);
+      }
+
+
+      li.appendChild(ul);
+
+    }
+
+    li.addEventListener("click", () => {
+      this._clearactive();
+      //this.content.clear();
+      li.classList.add("active");
+      // fn(this.content);
+    });
+    // trigger if it is active
+    if (is_active) {
+      this._clearactive();
+      //this.content.clear();
+      li.classList.add("active");
+      // fn(this.content);
+    }
+  }
+
+}
+
+
+export {
+  BasicTab,
+  DropdownTab
+};
+
+
+/*
+classes:
+  Application
+  Table
+  Button
+  TextBox
+  ComboBox
+  MessageBox
+  ConfirmBox
+  LoaderBox
+  Form
+*/
